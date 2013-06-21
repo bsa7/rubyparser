@@ -1,0 +1,160 @@
+settings:
+  testing:
+    workmode: work #work,test - Рабочий прогон, Тестовый прогон - загрузить страницу товара (testpage)
+    testpage1: http://anysite.ru/item/7372203/
+  name: anysite.ru
+  baseurl: http://anysite.ru
+  sublinks:
+    sublink1:
+      pattern: ^/context/
+      test: '/context/div_book/'
+    sublink2:
+      pattern: ^/category/
+      test: '/category/1137234/'
+  goodpagelinks:
+    pagelink1:
+      pattern: ^/item/
+      test: '/item/19565301/'
+  goodblock: //body
+  good_fields:
+    image:
+      field_block: //div[@class="itempic"]/img/@src
+#      field_block1: //a[contains(@href, '/pictures/big/')]
+      field_block2: //a[@id="zoom"]/img/@src
+    Наименование:
+      field_block: //td[@class="itemname"]/h1
+    Тип:
+      field_block: //td[@class="itemname"]/div[@id="type"]
+    Вендор:
+      field_block: //td[@class="itemname"]/div[@id="series"]
+#      field_block: //div[@class="mb5"]/following-sibling::h1[1]
+      delete1:
+        pattern: ^.*:\s
+        test: 'вы находитесь в карточке товара: Пистолет водяной Наган,пакет'
+    Описание:
+      field_block: //table[@class="item"][@width="100%"]/td[@class="description"]
+    Штрихкод:
+      field_block: //td[@class="itemname"]/div[@id="barcode"]
+      delete1:
+        pattern: ^.*:\s
+        test: 'Штрих-код: 4606089120729'
+#      field_block: //div[contains(@style,'padding-left:20px')][contains(@style,'padding-right:30px')]
+#      delete1:
+#        pattern: <[^>]*>\s*
+#        test: '><!-- низ карточки описания до мнений--><h3>Описание</h3><div style="color:rgb(19,105,193);">Водный пистолет Bondibon "Водная Битва" PAC 24см, # арт.ВВ0443<br><br>Дополнительное описание:<br>.</div><br>'
+#      delete2:
+#        pattern: Наличие.*$
+#        test: '<Описание>Наличие: В магазине</Описание>'
+#      delete3:
+#        pattern: Описание
+#        test: '><!-- низ карточки описания до мнений--><h3>Описание</h3><div style="color:rgb(19,105,193);">Водный пистолет Bondibon "Водная Битва" PAC 24см, # арт.ВВ0443<br><br>Дополнительное описание:<br>.</div><br>'
+#      delete4:
+#        pattern: Совет\sот\sмагазина\sПчеленок(\s)*
+#        test: '>ОписаниеПистоны 72 выстрела в 1- ой пачке. Совет от магазина Пчеленок :Если у вас 12 зарядный револьвер, то возможно разрывать обойму и вставлять на часть барабана т.к. 12 зарядные пистоны до сих пор редкость..Более подробная информация о Пистоны для детского пистолета  8 зарядов. по телефону 8(495) 517 30 56Добавить свое описаниеДобавить изображениеДобавить свое видеоВозможно, вам будут интересны товары из следующих категорий:Игровые наборыПистолеты и автоматы с пульками (шарики 6мм)Пистолеты и автоматы '
+#      delete5:
+#        pattern: Более\sподробная\sинформация\sо.*$
+#        test: '>ОписаниеПистоны 72 выстрела в 1- ой пачке. Совет от магазина Пчеленок :Если у вас 12 зарядный револьвер, то возможно разрывать обойму и вставлять на часть барабана т.к. 12 зарядные пистоны до сих пор редкость..Более подробная информация о Пистоны для детского пистолета  8 зарядов. по телефону 8(495) 517 30 56Добавить свое описаниеДобавить изображениеДобавить свое видеоВозможно, вам будут интересны товары из следующих категорий:Игровые наборыПистолеты и автоматы с пульками (шарики 6мм)Пистолеты и автоматы '
+#      field_block: //div[starts-with(@style, 'color:rgb')]
+#      field_block: //table/tbody/tr[1]/td[2]/div[1]/div[3]/div[1]
+#      field_block: /div[contains(@style, 'color:rgb(19,105,193);')]
+#      field_block: //div[@style contains(., 'color:rgb(19,105,193);')]
+#      delete1:
+#        pattern: <[^>]*>\s*
+#        test: '<p class="product_info"> gvsegr ewrgf we <br />'
+#      delete2:
+#        pattern: Текст нашей.*$
+#        test: '<p class="product_info"> gvsegr ewrgf we <br />'
+#    Автор:
+#      field_block: //table[@width="100%"][@cellspacing="0"][@cellpadding="7"][@border="0"]/tr/td/div[@class="mb5"][3]
+#      field_mask: ^([a-zA-Zа-яА-Я]|\.|\s)*$
+#      delete1:
+#        pattern: <[^>]*>\s*
+#        test: '<p class="product_info"> gvsegr ewrgf we <br />'
+#      delete2:
+#        pattern: Издатель.*$
+#        test: 'tml class=cprop>Панофка Генрих.</a><br>Издатель/ Изготовитель: <a href="ht'
+#      delete3:
+#        pattern: Автор\(ы\).\s
+#        test: '<Автор>Автор(ы): Голденцвайг Г.</Автор>'
+#    Издатель:
+#      field_block: //table[@width="100%"][@cellspacing="0"][@cellpadding="7"][@border="0"]/tr/td/div[@class="mb5"][3]
+#      field_mask: ^([a-zA-Zа-яА-Я]|\.|\s)*$
+#      delete1:
+#        pattern: <[^>]*>\s*
+#        test: '<p class="product_info"> gvsegr ewrgf we <br />'
+#      delete2:
+#        pattern: ^.*Издатель\/\sИзготовитель.
+#        test: 'tml class=cprop>Панофка Генрих.</a><br>Издатель/ Изготовитель: <a href="ht'
+#      delete3:
+#        pattern: \d{4,4}\sг\..*$
+#        test: 'tml class=cprop>Панофка Генрих.</a><br>Издатель/ Изготовитель: Музвка 2013 г.<a href="ht'
+#    Год издания:
+#      field_block: //td[@class="product_property"]/a[@class="anew" and @title[contains(., 'Год издания:')]]
+#    Категория:
+#      field_block: //td[@class="product_property"]/a[@class="anew" and @title[contains(., 'Категория:')]]
+#    ISBN:
+#      field_block: //table[@width="100%"][@cellspacing="0"][@cellpadding="7"][@border="0"]/tr/td/div[@class="mb5"][3]
+#      field_mask: ^(\s*(\d|-)+\s*,*)+$
+#      delete1:
+#        pattern: <[^>]*>\s*
+#        test: '<p class="product_info"> gvsegr ewrgf we <br />'
+#      delete2:
+#        pattern: ^.*ISBN\s
+#        test: 'Панофка Генрих.</a><br>Издатель/ Изготовитель: ISBN 122-111-12312-11221 href="ht'
+#      delete3:
+#        pattern: EAN.\s.*$
+#        test: 'Панофка Генрих.</a><br>Издатель/ Изготовитель: <a ISBN 122-111-12312-11221 EAN: 1231231231121'
+#    Штрихкод:
+#      field_block: //table[@width="100%"][@cellspacing="0"][@cellpadding="7"][@border="0"]/tr/td/div[@class="mb5"][3]
+#      field_mask: ^(\s*\d+\s*,*)+$
+#      delete1:
+#        pattern: <[^>]*>\s*
+#        test: '<p class="product_info"> gvsegr ewrgf we <br />'
+#      delete2:
+#        pattern: ^.*EAN.\s
+#        test: 'Панофка Генрих.</a><br>Издатель/ Изготовитель: ISBN 122-111-12312-11221 href="ht EAN: 1231231231121'
+#      delete3:
+#        pattern: Формат:.*$
+#        test: 'Панофка Генрих.</a><br>Издатель/ Изготовитель: <a ISBN 122-111-12312-11221 EAN: 1231231231121 Формат: выордолывр'
+#      field_block: //div[@class="articul"][contains(., "Код:")]
+#      delete1:
+#        pattern: ^Код:\s*
+#        test: 'Код: <b>6911400322811'
+#      delete2:
+#        pattern: <[^>]*>\s*
+#        test: '><!-- низ карточки описания до мнений--><h3>Описание</h3><div style="color:rgb(19,105,193);">Водный пистолет Bondibon "Водная Битва" PAC 24см, # арт.ВВ0443<br><br>Дополнительное описание:<br>.</div><br>'
+#      delete2:
+#        pattern: \s*\].*$
+#        test: '[978-5-386-01523-7] Энциклопедия современных рыболовных снастей'
+#      delete3:
+#        pattern: \-
+#        test: '[978-5-386-01523-7] Энциклопедия современных рыболовных снастей'
+#     field_block: //tr/td[contains(., "EAN:")]/following-sibling::td[1]
+#    Примечания:
+#      field_block: //tr/td[contains(., "Примечания:")]/following-sibling::td[1]
+#  good_fieldscss:
+#    css1:
+#      css_block: //div[@class="kart_right"]/div[not(@*)]
+#      awaitingfields: 'Код, Артикул, Склад, Штрих-код, Цена'
+#    css2:
+#      css_block: //div[contains(@style,'padding-left:20px')][contains(@style,'padding-right:30px')]/div[contains(@style,'color:rgb(19,105,193)')]
+#      awaitingfields: 'Штрих-код, Торг. марка, Объем упаковки, Инд. упаковка, Масса, Размеры, ДхШхВ, мм, '
+#    css2:
+#      css_block: //div[@style='color:rgb(19,105,193);']
+#      awaitingfields: 'Материалы, Производитель, Страна производства'
+#      delete1:
+#        pattern: <div id="basketbut\d+">.*$
+#        test: '<div class="styled_table table_white shadowtable"><img src="images/upload/4810344000996.jpg" style="min-width:250px; max-width:350px; float:left; margin-right:5px"><h3 class="btl">Конструктор "Зоопарк" (117 элем. в коробке) 0996</h3> 300x72x210 пластик  <br><hr> Категория: <b>Конструкторы</b><br>Каталог: <b>Полесье</b><br>Страна-производитель: <b>Беларусь</b><br> Роз. цена: <b>371.00р.</b><br>Опт. цена: <b>371.00р.</b><br>Остаток: <b>7</b><br><div id="basketbut4810344000996"><input type="text" name="cart" id="cart4810344000996" value="1" maxlength="6" size="4"/><br><a href="#" onclick="AddItem(4810344000996, 1, 7, 1); return false"><img src="images/cart1.png" title="Корзина"></a></td><td><a input type="button" onclick="var qty_el = document.getElementById'
+  good_fieldstable:
+    table1:
+      table_block: //table[@class="parameters"]
+#      delete1:
+#        pattern: Код:.*$
+#        test: 'В базе:</B></TD><TD VALIGN="top" ALIGN="left" CLASS="text">ISBN: 978-5-459-01658-1<br />Код: 910213<br />Название: ПИТЕР Аллан Программирование для мобильных устройств на iSO</TD>'
+#      delete2:
+#        pattern: ':'
+#        test: 'ЗНА:ЧЕНИЕ'
+#    table2:
+#      table_block: //div[@class="t1"]/table[@class="main_table lined"]
+#    table3:
+#      table_block: //div[@class="t2"]/table[@class="main_table lined"]

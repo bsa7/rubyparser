@@ -130,7 +130,6 @@ end
 def reconstructurl url, currpath=""
  url_currpath=URI(currpath.gsub(/\/(\w|-|\.|\?|=)+$/,"")).path
  url_root=URI(Node['baseurl']).scheme+"://"+URI(Node['baseurl']).host
- #puts "url=#{url}, currpath=#{currpath}, currpath.gsub(/\/(\w|-|\.|\?|=)+$/,"")=#{currpath.gsub(/\/(\w|-|\.|\?|=)+$/,"")}, url_root=#{url_root}"
  if url[url_root] #url передан в виде <схема>://<логин>:<пароль>@<хост>:<порт>/<URL путь>?<параметры>#<якорь>. Можно ничего не делать
   str=url
  elsif url[0]=="/" #url передан в виде /<URL путь>?<параметры>#<якорь> - путь относительно корня сайта
@@ -138,7 +137,6 @@ def reconstructurl url, currpath=""
  else #url передан в виде <URL путь>?<параметры>#<якорь> - путь относительно текущей папки (currpath)
   str=url_root+url_currpath+"/"+url
  end
- #puts "#{currpath}".magenta+" -> ".white+"#{url_currpath}".yellow
  return str
 end #reconstructurl url
 
@@ -148,11 +146,9 @@ end #reconstructurl url
 ###########################################################################################
 def parsetable page
  html=page.clone
- #puts html.inspect
  parameters=[]
  if Node.has_key?('good_fieldstable')
   Node['good_fieldstable'].keys.each do |fieldname|
-   #puts "#{Node['good_fieldstable'][fieldname].inspect}"
    tableidentifyer=Node['good_fieldstable'][fieldname]#['table_block']
    deletepatterns=[]
    Node['good_fieldstable'][fieldname].keys.each do |fieldproperty|
@@ -160,10 +156,7 @@ def parsetable page
      deletepatterns << Node['good_fieldstable'][fieldname][fieldproperty]['pattern']
     end
    end #Node['good_fields'][fieldname].keys.each do |fieldproperty|
-   #puts "#{fieldname} #{tableidentifyer}".cyan
    html.search(tableidentifyer['table_block']).each do |table|
-    #puts "#{'='*100}".yellow
-    #puts "#{table}".encode('UTF-8').blue
     table.css('tr').each do |row|
      param=[]
      paramtext=""
@@ -209,11 +202,9 @@ def getpage url
    browser.follow_meta_refresh = true
    browser.history.max_size = 1
   end
-  #puts "follow (#{goodBlockIdentifyer}) to page: #{url}".yellow
   begin
    page=agent.get(url)
    break
-   #puts page.methods
   rescue Mechanize::ResponseCodeError => ex
    if $timewait<=Maxtimewait
     puts "Ошибка #{ex.response_code} доступа к ".red+"#{url}".white+" - Увеличим задержку до #{$timewait}".red
@@ -251,11 +242,8 @@ def parsegood goodlink
  end
  goodBlockIdentifyer=""
  goodBlockIdentifyer=Node['goodblock']
- #puts goodBlockIdentifyer.magenta
- #gets
 
  if goodlink.class.to_s["String"]
-#  puts "#{goodlink.class}".bg_cyan.black
   page=getpage goodlink
   if page==nil
    return
@@ -263,7 +251,6 @@ def parsegood goodlink
  else
   page=goodlink.clone
   goodlink=page.inspect.cleaneols.gsub(/^.+URL:/,"").gsub(/>\}.*$/,"")
-  #puts "#{page.inspect}".bg_cyan.black
  end
  puts "Парсинг страницы с товаром: #{goodlink}".magenta #+", #{page.inspect.cleaneols.gsub(/^.+URL:/,"").gsub(/>\}.*$/,"")}".white
  page.search(goodBlockIdentifyer).each do |inDiv|
@@ -274,12 +261,8 @@ def parsegood goodlink
    deletepatterns=[]
    presentas="inner_html"
    Node['good_fields'][fieldname].keys.each do |fieldproperty|
-    #puts "!#{fieldproperty}"
     if Regexp.new("^field_block").match(fieldproperty)
-     #puts "#{Node['good_fields'][fieldname].inspect}".red
      Node['good_fields'][fieldname].each do |block|
-      #puts "#{block}".cyan
-      #next unless /^field_block$/ ~= block
       fieldblocks << block #Node['good_fields'][fieldname][fieldproperty]
      end
     end
@@ -290,22 +273,18 @@ def parsegood goodlink
      deletepatterns << Node['good_fields'][fieldname][fieldproperty]['pattern']
     end
    end #Node['good_fields'][fieldname].keys.each do |fieldproperty|
-   #puts fieldblocks
    mask=""
    fieldblocks.each do |fieldblock|
     mask=fieldblock[1] if fieldblock[0] =~ /^field_mask$/
    end
    fieldblocks.each do |fieldblock|
-    #puts "!!#{fieldblock}"
     next unless fieldblock[0] =~ /^field_block$/
     inDiv.search(fieldblock[1]).each do |info|
      blocktext= (presentas=="text") ? info.text : (presentas=="") ? info.to_s : info.inner_html.to_s
-     #puts "#{blocktext.inspect}".brown
      blocktext=blocktext.cleaneols.encode('UTF-8').strip
      deletepatterns.each do |deletepattern|
       blocktext=blocktext.gsub(Regexp.new(deletepattern),"")
      end #deletepatterns.each do |deletepattern|
-     #puts "#{info.inner_html.encode('UTF-8')} "+"преобразовано с помощью #{deletepatterns.inspect}".red+" в #{blocktext}"
      if fieldname=="image"
       if checkurl(blocktext)
        blocktext=reconstructurl blocktext
@@ -314,7 +293,6 @@ def parsegood goodlink
       end
      end
      next if blocktext.empty?
-     #puts mask
      unless mask.empty?
       next unless blocktext =~ Regexp.new(mask)
      end
@@ -325,46 +303,28 @@ def parsegood goodlink
    end
   end #Node['good_fields'].keys.each do |fieldname|
   #################################### Разбор с помощью css ###############################################################
-  # Node['good_fieldscss'].keys.each do |keyname|
   if Node.has_key?('good_fieldscss')
    Node['good_fieldscss'].each do |cssblock|
-    #puts "#{cssblock}, #{cssblock[1]['css_block']}"
     inDiv.search(cssblock[1]['css_block']).each do |row|
-     #puts row.inner_html.encode('UTF-8').cleaneols.removedups.gsub(/<[^>]*>\s*/,":").gsub(/(:{1,}\s*){2,}/,":").gsub(/^,+/,"").gsub("(","").gsub(")","").strip.gsub(/^:+/,"")
      innerhtml=row.inner_html.encode('UTF-8').cleaneols.removedups.gsub(/<[^>]*>\s*/,":").gsub(/(:{1,}\s*){2,}/,":").gsub(/^,+/,"").gsub("(","").gsub(")","").strip.gsub(/^:+/,"")
      deletepatterns=[]
-     #puts "#{cssname[1]}".red
      cssblock[1].keys.each do |cssproperty|
-      #puts "#{cssproperty}".cyan
       if Regexp.new("^delete").match(cssproperty)
-       #puts "#{cssname[1][cssproperty].inspect}".blue
        deletepatterns << cssname[1][cssproperty]['pattern']
       end
      end #cssname[1].keys.each do |cssproperty|
-     #puts "#{deletepatterns.inspect}"
      deletepatterns.each do |todelete|
       innerhtml=innerhtml.gsub(Regexp.new(todelete),"")
      end
-     #puts "!!!#{innerhtml}".white
      if cssblock[1].has_key? 'awaitingfields'
       fieldsarray=innerhtml / /:/
-      #puts "#{row.inner_html.encode('UTF-8')}"
-      #puts "#{innerhtml}".white
-      #puts "#{fieldsarray}"
       opened=false
       closed=false
       fieldname=""
       someinwritten=false
       fieldsarray.each do |elem|
        teststr=elem.gsub(",","").strip.gsub(Regexp.new(/^\//),"").removebrakets.gsub(Regexp.new(/\/$/),"").gsub(Regexp.new(/\\/),"").gsub(Regexp.new(/(\?|\.)/),"").encode('UTF-8')
- #      if cssname[1]['awaitingfields'].to_s.encode('UTF-8').match(teststr)!=nil
- #       puts "!#{teststr}! в #{cssname[1]['awaitingfields'].to_s.encode('UTF-8')} : #{cssname[1]['awaitingfields'].to_s.encode('UTF-8').match(teststr)}".green
- #      else
- #       puts "!#{teststr}! в #{cssname[1]['awaitingfields'].to_s.encode('UTF-8')} : #{cssname[1]['awaitingfields'].to_s.encode('UTF-8').match(teststr)}".red
- #      end
-#       puts "cssblock[1]['awaitingfields'].to_s.encode('UTF-8')=".green+"#{cssblock[1]['awaitingfields'].to_s.encode('UTF-8')}".white+", teststr=".green+"#{teststr}".white
        next if teststr.empty?
-       #puts "!#{fieldname}!".red
        if cssblock[1]['awaitingfields'].to_s.encode('UTF-8').match(teststr)!=nil
         if ((opened) && (!closed))
          print "</#{fieldname}>\n".yellow
@@ -375,7 +335,6 @@ def parsegood goodlink
         end
         fieldname=elem
         next if elem.gsub(/(\.|,|:|\-|=|\?)*/,"").cleaneols.strip.empty?
-        #puts "<#{elem.gsub(/(\.|\,|:|\-|=)*/,"").strip}>".blue
         print "<#{fieldname}>".yellow
         $outputfilegoods.write "<#{fieldname}>"
         opened=true
@@ -387,14 +346,12 @@ def parsegood goodlink
          someinwritten=true
         end #if opened
        end #if Node['good_fieldscss']['awaitingfields'].match elem.gsub(",","")
-       #puts "(#{n}) - #{elem}".yellow
       end #fieldsarray.each do |elem|
       if fieldname!=""
        print "</#{fieldname}>\n".yellow
        $outputfilegoods.write "</#{fieldname}>"
        someinwritten=false
        somewritten=true
-       #puts "#{'='*100}".red
        opened=false
        closed=true
       end #if fieldname!=""
@@ -419,19 +376,15 @@ def testNode node
  pattern=""
  node.keys.each do |keyname|
   if keyname=="pattern"
-#   puts "pattern: #{node[keyname]}".red
    pattern=Regexp.new(node[keyname])
   elsif keyname=="test"
-#   puts "test: #{node[keyname]}".red
    test=node[keyname]
    if (pattern.match test)
-    #puts "#{pattern} == #{test} ?".green
    else
     puts "#{pattern} == #{test} ?".red
    end
   end
   if node[keyname].is_a?(Hash)
-#   puts "#{keyname} = #{node[keyname]}".yellow
    testNode node[keyname]
   end
  end
@@ -462,7 +415,6 @@ def kraule url
   end
   Node['goodpagelinks'].each do |pagelinkpattern|
    if Regexp.new(pagelinkpattern[1]['pattern']).match querylinks[pointer][1]
-    #puts "Мы находимся в странице товара"
     if checkurl querylinks[pointer][1]
      goodlink=reconstructurl querylinks[pointer][1]
      if !$goodlinks.include? goodlink  #Все ссылки проверяем только один раз.
@@ -479,12 +431,10 @@ def kraule url
   puts "Проверка ссылок на странице ".cyan+"#{querylinks[pointer][1]}".white
   page.links_with().each do |link|
    next if link.href==nil
-   #puts link.href.yellow
    next if link.href.to_s.size<=1
    added=false
    Node['sublinks'].each do |sublinkpattern|
     if Regexp.new(sublinkpattern[1]['pattern']).match link.href
-     #puts "#{sublinkpattern[0]}, #{sublinkpattern[1]['pattern']}".green
      newlink=reconstructurl link.href, querylinks[pointer][1]
      if ((!querylinks.include?([0, newlink])) && (!querylinks.include?([1, newlink])))
       puts "+ подстраница: ".green+"#{newlink}".white
@@ -495,7 +445,6 @@ def kraule url
    end
    Node['goodpagelinks'].each do |pagelinkpattern|
     if Regexp.new(pagelinkpattern[1]['pattern']).match link.href
-     #puts "#{pagelinkpattern[0]}, #{pagelinkpattern[1]['pattern']}".green
      goodlink=reconstructurl link.href, querylinks[pointer][1]
      if !$goodlinks.include? goodlink  #Все ссылки проверяем только один раз.
       puts "+       Товар: ".green+"#{goodlink}".white
@@ -531,8 +480,6 @@ rescue Psych::SyntaxError => ex
 end
 if parser['settings'].size>0
  Node=parser['settings']
- #puts "baseurl: #{Node['baseurl']}, #{Node.keys}"
- #puts "#{parser['settings']}".cyan
 end
 
 $readedlinks=[]
@@ -548,15 +495,10 @@ if File.exist?(filewithgoods) #.gsub!(/\r\n?/, "")
 end
 puts "Уже найдено #{$goodfound} товаров."
 $outputfilegoods=File.open(filewithgoods,'a')
-#puts "test color".bg_cyan.black
 testNode Node
-#puts "!!!#{". ,".gsub(/(\.|\s|\,|:|\-|=)*/,"")}!!!"
-#puts "Kacheli---Trio-116x57x445h".yellow+" http://www.pchelenok.com/Detskie-domiki-palatki-korzini-dlya-igrushek".red
-#puts "#{reconstructurl "radioupravljaemye-igrushki-mashinki-vertoljoty-samoljoty-tanki","http://www.pchelenok.com/radioupravljaemye-igrushki-mashinki-vertoljoty-samoljoty-tanki?start_pos=28"}".red
 
 if (Node['testing']['workmode']=="test")
  $goodfound=-1
- #puts Node['testing'].inspect
  Node['testing'].keys.each do |testpage|
   next unless testpage =~ /^testpage/
   if checkurl Node['testing'][testpage]
